@@ -1,0 +1,21 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `user_registration`(
+    IN p_user_type varchar(1),
+    IN p_user_code varchar(250),
+	IN p_shop_name varchar(500),
+	IN p_email varchar(500),
+	IN p_mobile varchar(50),
+	IN p_password varchar(200),
+    OUT out_userid varchar(11),
+    OUT out_usertype varchar(1)
+)
+BEGIN
+	DECLARE userid INT unsigned DEFAULT 1;
+    insert into mt_user (user_code, user_type, email, mobile, shop_name, registeredon) 
+	values (LEFT(MD5(RAND()), 11), p_user_type, p_email, p_mobile, p_shop_name, sysdate());
+	set userid = last_insert_id();
+	insert into t_sellerpassword (password, seller_id) 
+						  values (p_password, userid);
+						  
+	SELECT user_code INTO out_userid FROM mt_user WHERE user_id = userid;
+	SELECT p_user_type INTO out_usertype;
+END

@@ -1,0 +1,20 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `user_login`(
+	IN p_user_type bigint,
+	IN p_email varchar(500),
+	IN p_password varchar(200)
+)
+BEGIN
+	if p_user_type = 'S' THEN
+		select  s.seller_code, s.email, s.mobile, s.shop_name, s.registeredon 
+		from mt_seller s, t_sellerpassword p
+		where 
+			email = p_email and p.password = p_password or
+			email = p_mobile and p.password = p_password;
+    else 
+		select  s.buyer_code, s.email, s.mobile, s.registeredon 
+		from mt_buyer s, t_buyerpassword p
+		where 
+			email = p_email and p.password = p_password or
+			email = p_mobile and p.password = p_password;
+	end if;
+end

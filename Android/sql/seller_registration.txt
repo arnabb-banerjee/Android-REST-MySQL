@@ -1,0 +1,25 @@
+DELIMITER //
+CREATE PROCEDURE seller_registration
+(
+	IN p_mode int,
+	IN p_seller_id bigint,
+    	IN p_seller_code varchar(250),
+	IN p_shop_name varchar(500),
+	IN p_email varchar(500),
+	IN p_mobile varchar(50),
+	IN p_password varchar(200)
+)
+BEGIN
+	DECLARE userid INT unsigned DEFAULT 1;
+    
+    	if p_mode = 0 THEN
+		insert into mt_seller (seller_code, email, mobile, shop_name, registeredon) values (LEFT(MD5(RAND()), 11), p_shop_name, p_email, p_mobile);
+		select userid = last_insert_id();
+        
+        insert into t_sellerpassword (password, seller_id) 
+							  values (p_password, userid);
+                              
+		select seller_code, email, mobile, shop_name, registeredon from mt_seller where seller_id = userid;
+	end if;
+END //
+DELIMITER ;
